@@ -19,9 +19,25 @@
       </div>
 
       <div class="header-icon">🛡️</div>
-    </header>
+</header>
 
-    <main class="main-content">
+<div class="firebase-auth-bar">
+
+  <button id="signInBtn" class="auth-btn">
+    Sign in with Google
+  </button>
+
+  <button id="signOutBtn" class="auth-btn hidden">
+    Sign Out
+  </button>
+
+  <div id="authStatus" class="auth-status">
+    Not signed in
+  </div>
+
+</div>
+
+<main class="main-content">
 
       <!-- Dashboard View -->
       <section id="dashboardView" class="view active-view">
@@ -667,6 +683,24 @@
     </nav>
 
   </div>
+
+  <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDzcYzZlhNn03MeP6yNU7jx0JqghnlEYDw",
+    authDomain: "contigency-1b6a8.firebaseapp.com",
+    projectId: "contigency-1b6a8",
+    storageBucket: "contigency-1b6a8.firebasestorage.app",
+    messagingSenderId: "227516505632",
+    appId: "1:227516505632:web:66aec8d317e47b57a22645"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+</script>
 
   <script src="script.js"></script>
 </body>

@@ -1,3 +1,55 @@
+// ====================
+// FIREBASE
+// ====================
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null;
+
+// Auth UI
+const signInBtn = document.getElementById("signInBtn");
+const signOutBtn = document.getElementById("signOutBtn");
+const authStatus = document.getElementById("authStatus");
+
+if (signInBtn) {
+  signInBtn.addEventListener("click", async () => {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+
+      await auth.signInWithPopup(provider);
+    } catch (error) {
+      console.error(error);
+      alert("Sign in failed.");
+    }
+  });
+}
+
+if (signOutBtn) {
+  signOutBtn.addEventListener("click", async () => {
+    await auth.signOut();
+  });
+}
+
+auth.onAuthStateChanged(async (user) => {
+  currentUser = user;
+
+  if (user) {
+    authStatus.textContent =
+      `Signed in as ${user.displayName}`;
+
+    signInBtn.classList.add("hidden");
+    signOutBtn.classList.remove("hidden");
+
+    await loadScenariosFromFirebase();
+  } else {
+    authStatus.textContent = "Not signed in";
+
+    signInBtn.classList.remove("hidden");
+    signOutBtn.classList.add("hidden");
+  }
+});
+
 const navButtons = document.querySelectorAll(".nav-btn");
 const views = document.querySelectorAll(".view");
 
@@ -605,6 +657,7 @@ if (scenarioForm) {
 
       saveScenarios(updatedScenarios);
       refreshApp();
+      saveScenariosToFirebase();
       resetScenarioForm();
 
       alert("Scenario updated successfully.");
@@ -621,6 +674,7 @@ if (scenarioForm) {
 
     saveScenarios(scenarios);
     refreshApp();
+    saveScenariosToFirebase();
     resetScenarioForm();
 
     alert("Scenario saved successfully.");
@@ -642,6 +696,7 @@ function deleteScenario(id) {
   });
 
   saveScenarios(updatedScenarios);
+  saveScenariosToFirebase();
   refreshApp();
 
   alert("Scenario deleted.");
@@ -816,5 +871,60 @@ filterButtons.forEach((button) => {
     renderScenarios();
   });
 });
+
+// ====================
+// FIREBASE STORAGE
+// ====================
+
+async function saveScenariosToFirebase() {
+
+  if (!currentUser) return;
+
+  try {
+
+    const scenarios = getSavedScenarios();
+
+    await db
+      .collection("users")
+      .doc(currentUser.uid)
+      .set({
+        scenarios,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function loadScenariosFromFirebase() {
+
+  if (!currentUser) return;
+
+  try {
+
+    const doc = await db
+      .collection("users")
+      .doc(currentUser.uid)
+      .get();
+
+    if (!doc.exists) return;
+
+    const data = doc.data();
+
+    if (data.scenarios) {
+
+      localStorage.setItem(
+        "contingencyScenarios",
+        JSON.stringify(data.scenarios)
+      );
+
+      refreshApp();
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 refreshApp();
