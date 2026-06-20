@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Contingency</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app">
+
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">App 9</p>
+        <h1>Contingency</h1>
+        <p class="tagline">Prepare. Respond. Recover.</p>
+      </div>
+
+      <div class="header-icon">🛡️</div>
+</header>
+
+<div class="firebase-auth-bar">
+
+  <button id="signInBtn" class="auth-btn">
+    Sign in with Google
+  </button>
+
+  <button id="signOutBtn" class="auth-btn hidden">
+    Sign Out
+  </button>
+
+  <div id="authStatus" class="auth-status">
+    Not signed in
+  </div>
+
+</div>
+
+<main class="main-content">
+
+      <!-- Dashboard View -->
+      <section id="dashboardView" class="view active-view">
+
+        <div class="hero-card dashboard-hero">
+          <div>
+            <p class="eyebrow">Readiness overview</p>
+            <h2>Your response system</h2>
+            <p>
+              Prepare calm step-by-step plans before problems happen,
+              then act quickly when life shifts unexpectedly.
+            </p>
+          </div>
+
+          <div class="hero-status">
+            <span>🛡️</span>
+            <strong id="overallPreparednessLabel">Prepared</strong>
+          </div>
+        </div>
+
+        <section class="section-block">
+          <div class="section-title-row">
+            <h2>Preparedness scores</h2>
+            <span class="section-note">Auto-updates from saved plans</span>
+          </div>
+
+          <div class="score-grid">
+            <article class="score-card" data-score-category="Travel">
+              <span>✈️</span>
+              <div>
+                <h3>Travel</h3>
+                <p id="travelScoreText">0% ready</p>
+                <div class="score-bar"><div id="travelScoreBar" style="width: 0%;"></div></div>
+              </div>
+            </article>
+
+            <article class="score-card" data-score-category="Work">
+              <span>💼</span>
+              <div>
+                <h3>Work</h3>
+                <p id="workScoreText">0% ready</p>
+                <div class="score-bar"><div id="workScoreBar" style="width: 0%;"></div></div>
+              </div>
+            </article>
+
+            <article class="score-card" data-score-category="Money">
+              <span>💷</span>
+              <div>
+                <h3>Money</h3>
+                <p id="moneyScoreText">0% ready</p>
+                <div class="score-bar"><div id="moneyScoreBar" style="width: 0%;"></div></div>
+              </div>
+            </article>
+
+            <article class="score-card" data-score-category="Wellbeing">
+              <span>🧠</span>
+              <div>
+                <h3>Wellbeing</h3>
+                <p id="wellbeingScoreText">0% ready</p>
+                <div class="score-bar"><div id="wellbeingScoreBar" style="width: 0%;"></div></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-title-row">
+            <h2>Quick actions</h2>
+          </div>
+
+          <div class="quick-grid">
+            <button class="quick-btn danger" id="emergencyModeBtn">
+              <span>🚨</span>
+              Emergency Mode
+            </button>
+
+            <button class="quick-btn amber" data-view-link="recoveryView">
+              <span>🧘</span>
+              Recovery Mode
+            </button>
+
+            <button class="quick-btn blue" data-quick-category="Travel">
+              <span>✈️</span>
+              Travel Issue
+            </button>
+
+            <button class="quick-btn green" data-quick-category="Work">
+              <span>💼</span>
+              Work Issue
+            </button>
+          </div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-title-row">
+            <h2>High priority scenarios</h2>
+            <button class="small-link" data-view-link="scenariosView">View all</button>
+          </div>
+
+          <div id="dashboardPriorityList"></div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-title-row">
+            <h2>Today’s calm reminder</h2>
+          </div>
+
+          <div class="reminder-card">
+            <h3>Solve the next step first</h3>
+            <p>
+              A contingency plan is not about expecting disaster.
+              It is about knowing how to respond calmly when something changes.
+            </p>
+          </div>
+        </section>
+
+      </section>
+
+      <!-- Scenarios View -->
+      <section id="scenariosView" class="view">
+
+        <div class="section-title-row page-title-row">
+          <div>
+            <p class="eyebrow">Scenario Library</p>
+            <h2>Your saved response plans</h2>
+          </div>
+
+          <button class="add-btn" data-view-link="addView">+ Add</button>
+        </div>
+
+        <div class="library-summary">
+          <article>
+            <span>🗂️</span>
+            <strong id="totalPlansCount">0</strong>
+            <p>Total plans</p>
+          </article>
+
+          <article>
+            <span>🔴</span>
+            <strong id="redPlansCount">0</strong>
+            <p>High priority</p>
+          </article>
+
+          <article>
+            <span>🟠</span>
+            <strong id="amberPlansCount">0</strong>
+            <p>Amber plans</p>
+          </article>
+        </div>
+
+        <div class="search-box">
+          <span>🔎</span>
+          <input id="scenarioSearchInput" type="text" placeholder="Search scenarios..." />
+        </div>
+
+        <div class="filter-row">
+          <button class="filter-pill active" data-filter="All">All</button>
+          <button class="filter-pill" data-filter="Travel">Travel</button>
+          <button class="filter-pill" data-filter="Work">Work</button>
+          <button class="filter-pill" data-filter="Money">Money</button>
+          <button class="filter-pill" data-filter="Daily Life">Daily Life</button>
+          <button class="filter-pill" data-filter="Wellbeing">Wellbeing</button>
+          <button class="filter-pill" data-filter="Home">Home</button>
+          <button class="filter-pill" data-filter="Social">Social</button>
+          <button class="filter-pill" data-filter="Long-Term">Long-Term</button>
+          <button class="filter-pill" data-filter="Transport">Transport</button>
+<button class="filter-pill" data-filter="Pets">Pets</button>
+<button class="filter-pill" data-filter="Technology">Technology</button>
+<button class="filter-pill" data-filter="Health">Health</button>
+<button class="filter-pill" data-filter="Family">Family</button>
+<button class="filter-pill" data-filter="Education">Education</button>
+<button class="filter-pill" data-filter="Security">Security</button>
+        </div>
+
+        <div id="scenarioList" class="scenario-list"></div>
+
+        <div id="emptyState" class="empty-state">
+          <div class="empty-icon">🛡️</div>
+
+          <h3>No scenarios yet</h3>
+
+          <p>
+            Build your first contingency plan to start preparing
+            for travel, work, money, or everyday disruptions.
+          </p>
+
+          <button class="save-btn empty-btn" data-view-link="addView">
+            Create First Scenario
+          </button>
+        </div>
+
+      </section>
+
+      <!-- Scenario Detail View -->
+      <section id="scenarioDetailView" class="view">
+
+        <div class="section-title-row page-title-row">
+          <div>
+            <p class="eyebrow">Response Plan</p>
+            <h2 id="detailTitle">Scenario title</h2>
+          </div>
+
+          <button class="small-link" data-view-link="scenariosView">
+            Back
+          </button>
+        </div>
+
+        <div id="scenarioDetailContent"></div>
+
+      </section>
+
+      <!-- Quick Action View -->
+      <section id="quickActionView" class="view">
+
+        <div class="section-title-row page-title-row">
+          <div>
+            <p class="eyebrow">Quick Action Mode</p>
+            <h2 id="quickTitle">Scenario title</h2>
+          </div>
+
+          <button class="small-link" onclick="goToScenarioLibrary()">
+            Exit
+          </button>
+        </div>
+
+        <div class="hero-card quick-hero-card">
+          <div>
+            <p class="eyebrow">Stress reduction mode</p>
+
+            <h2>Focus only on the next actions.</h2>
+
+            <p>
+              Quick Action Mode removes unnecessary information and
+              helps you work through the situation step by step.
+            </p>
+          </div>
+
+          <div class="quick-hero-icon">
+            ⚡
+          </div>
+        </div>
+
+        <div id="quickActionContent">
+
+          <div class="quick-action-card">
+
+            <div class="quick-action-header">
+              <div>
+                <p class="category-label">Scenario</p>
+                <h3>Quick actions will appear here</h3>
+
+                <p>
+                  Open a scenario and press Quick Action to load
+                  the focused emergency steps.
+                </p>
+              </div>
+
+              <span class="severity amber">Ready</span>
+            </div>
+
+            <div class="quick-step-list">
+
+              <div class="quick-step">
+                <div>
+                  <strong>Step 1</strong>
+                  <span>Pause and stabilise first.</span>
+                </div>
+              </div>
+
+              <div class="quick-step">
+                <div>
+                  <strong>Step 2</strong>
+                  <span>Follow the next safe action only.</span>
+                </div>
+              </div>
+
+              <div class="quick-step">
+                <div>
+                  <strong>Step 3</strong>
+                  <span>Open the full plan if needed.</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="quick-calm-card">
+            <h3>Calm reminder</h3>
+
+            <p>
+              You do not need to solve everything immediately.
+              One step at a time is enough.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="quick-bottom-card">
+
+          <div class="quick-bottom-grid">
+
+            <button
+              class="quick-bottom-btn recovery-btn"
+              data-view-link="recoveryView"
+            >
+              <span>🧘</span>
+              Recovery Mode
+            </button>
+
+            <button
+              class="quick-bottom-btn library-btn"
+              onclick="goToScenarioLibrary()"
+            >
+              <span>🗂️</span>
+              Scenario Library
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- Add / Edit View -->
+      <section id="addView" class="view">
+
+        <div class="section-title-row page-title-row">
+          <div>
+            <p id="formEyebrow" class="eyebrow">Create Plan</p>
+            <h2 id="formTitle">Add new scenario</h2>
+          </div>
+        </div>
+
+        <form id="scenarioForm" class="scenario-form">
+
+          <input type="hidden" id="editingScenarioId" />
+
+          <div class="form-card">
+            <h3>Basic details</h3>
+
+            <label>
+              Scenario title
+              <input id="scenarioTitle" type="text" placeholder="e.g. Missed Train" required />
+            </label>
+
+            <label>
+              Category
+              <select id="scenarioCategory">
+                <option>Travel</option>
+                <option>Work</option>
+                <option>Money</option>
+                <option>Daily Life</option>
+                <option>Wellbeing</option>
+                <option>Home</option>
+                <option>Social</option>
+                <option>Long-Term</option>
+                <option>Transport</option>
+<option>Pets</option>
+<option>Technology</option>
+<option>Health</option>
+<option>Family</option>
+<option>Education</option>
+<option>Security</option>
+              </select>
+            </label>
+
+            <label>
+              Severity
+              <select id="scenarioSeverity">
+                <option>Green</option>
+                <option>Amber</option>
+                <option>Red</option>
+              </select>
+            </label>
+
+            <label>
+              Preparedness score
+              <input id="scenarioPreparedness" type="number" min="0" max="100" placeholder="0-100" />
+            </label>
+
+            <label>
+              Trigger
+              <textarea id="scenarioTrigger" placeholder="When should this plan be used?"></textarea>
+            </label>
+          </div>
+
+          <div class="form-card">
+            <h3>Response plan</h3>
+
+            <label>
+              Immediate steps
+              <textarea id="scenarioImmediate" placeholder="Step 1&#10;Step 2&#10;Step 3"></textarea>
+            </label>
+
+            <label>
+              Backup plan
+              <textarea id="scenarioBackup" placeholder="What should you do if the first plan fails?"></textarea>
+            </label>
+
+            <label>
+              Recovery plan
+              <textarea id="scenarioRecovery" placeholder="How do you stabilise afterwards?"></textarea>
+            </label>
+          </div>
+
+          <div class="form-card">
+            <h3>Support information</h3>
+
+            <label>
+              Resources needed
+              <textarea id="scenarioResources" placeholder="e.g. passport copy&#10;emergency cash&#10;insurance number"></textarea>
+            </label>
+
+            <label>
+              Contacts
+              <textarea id="scenarioContacts" placeholder="e.g. family contact&#10;manager&#10;insurer"></textarea>
+            </label>
+
+            <label>
+              Useful links
+              <textarea id="scenarioLinks" placeholder="Paste useful links, one per line"></textarea>
+            </label>
+          </div>
+
+          <div class="form-card">
+            <h3>Review and learning</h3>
+
+            <label>
+              Notes
+              <textarea id="scenarioNotes" placeholder="Extra notes for this scenario"></textarea>
+            </label>
+
+            <label>
+              Lessons learned
+              <textarea id="scenarioLessons" placeholder="What should be improved after using this plan?"></textarea>
+            </label>
+
+            <label>
+              Review frequency
+              <select id="scenarioReview">
+                <option>Monthly</option>
+                <option>Quarterly</option>
+                <option>Every 6 months</option>
+                <option>Yearly</option>
+                <option>Only when needed</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="form-action-row">
+            <button id="saveScenarioBtn" type="submit" class="save-btn">
+              Save Scenario
+            </button>
+
+            <button id="cancelEditBtn" type="button" class="secondary-form-btn hidden">
+              Cancel Edit
+            </button>
+          </div>
+
+        </form>
+
+      </section>
+
+      <!-- Recovery View -->
+      <section id="recoveryView" class="view">
+
+        <div class="section-title-row page-title-row">
+          <div>
+            <p class="eyebrow">Recovery Mode</p>
+            <h2>Stabilise first</h2>
+          </div>
+        </div>
+
+        <div class="hero-card recovery-hero">
+          <div>
+            <h2>Reduce the pressure.</h2>
+
+            <p>
+              Recovery Mode helps you slow down, reduce decision overload,
+              and focus only on what matters right now.
+            </p>
+          </div>
+
+          <div class="recovery-icon">
+            🧘
+          </div>
+        </div>
+
+        <div class="recovery-status-card">
+          <div>
+            <p class="recovery-label">Current priority</p>
+            <h3>Stabilisation</h3>
+          </div>
+
+          <span>CALM MODE</span>
+        </div>
+
+        <div class="detail-card">
+          <h3>Immediate stabilisation</h3>
+
+          <div class="recovery-checklist">
+
+            <label>
+              <input type="checkbox" />
+              <span>Sit somewhere safe and quiet</span>
+            </label>
+
+            <label>
+              <input type="checkbox" />
+              <span>Slow your breathing</span>
+            </label>
+
+            <label>
+              <input type="checkbox" />
+              <span>Drink water</span>
+            </label>
+
+            <label>
+              <input type="checkbox" />
+              <span>Reduce non-essential decisions</span>
+            </label>
+
+            <label>
+              <input type="checkbox" />
+              <span>Focus only on the next action</span>
+            </label>
+
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <h3>Top 3 priorities</h3>
+
+          <div class="priority-grid">
+
+            <div class="priority-item">
+              <strong>1</strong>
+
+              <div>
+                <h4>Safety first</h4>
+                <p>Are you safe, sheltered, and able to think clearly?</p>
+              </div>
+            </div>
+
+            <div class="priority-item">
+              <strong>2</strong>
+
+              <div>
+                <h4>Communication</h4>
+                <p>Do you need to update family, work, or travel contacts?</p>
+              </div>
+            </div>
+
+            <div class="priority-item">
+              <strong>3</strong>
+
+              <div>
+                <h4>Next smallest action</h4>
+                <p>Do not solve everything. Solve the next thing.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="detail-card calm-card">
+          <h3>What actually matters?</h3>
+
+          <p>
+            Delays, mistakes, disruptions, and difficult days do not define your future.
+            Your goal right now is not perfection — it is stabilisation.
+          </p>
+        </div>
+
+        <div class="detail-card">
+          <h3>Low-energy recovery plan</h3>
+
+          <div class="low-energy-list">
+
+            <div class="low-energy-item">
+              <span>💧</span>
+              <p>Drink water and eat something simple</p>
+            </div>
+
+            <div class="low-energy-item">
+              <span>📱</span>
+              <p>Reply only to important messages</p>
+            </div>
+
+            <div class="low-energy-item">
+              <span>🛏️</span>
+              <p>Reduce expectations for today</p>
+            </div>
+
+            <div class="low-energy-item">
+              <span>🎧</span>
+              <p>Lower sensory overload if possible</p>
+            </div>
+
+            <div class="low-energy-item">
+              <span>✅</span>
+              <p>Complete one useful task only</p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <h3>Recovery reminders</h3>
+
+          <div class="reminder-stack">
+
+            <div class="reminder-pill">
+              You are allowed to slow down.
+            </div>
+
+            <div class="reminder-pill">
+              Stability is more important than speed.
+            </div>
+
+            <div class="reminder-pill">
+              Solve the next 10 minutes first.
+            </div>
+
+            <div class="reminder-pill">
+              You do not need to optimise under stress.
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-view="dashboardView">
+        <span>🏠</span>
+        Home
+      </button>
+
+      <button class="nav-btn" data-view="scenariosView">
+        <span>🗂️</span>
+        Scenarios
+      </button>
+
+      <button class="nav-btn" data-view="addView">
+        <span>➕</span>
+        Add
+      </button>
+
+      <button class="nav-btn" data-view="recoveryView">
+        <span>🧘</span>
+        Recover
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDzcYzZlhNn03MeP6yNU7jx0JqghnlEYDw",
+    authDomain: "contigency-1b6a8.firebaseapp.com",
+    projectId: "contigency-1b6a8",
+    storageBucket: "contigency-1b6a8.firebasestorage.app",
+    messagingSenderId: "227516505632",
+    appId: "1:227516505632:web:66aec8d317e47b57a22645"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+  <script src="script.js"></script>
+</body>
+</html>
